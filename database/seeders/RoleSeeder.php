@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Enums\Role as RoleEnums;
+use App\Enums\Permission as PermissionEnums;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
 {
@@ -12,10 +15,19 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (App\Enums\Role::cases() as $role) {
-            Role::create([
-                'name' => $role->value,
-            ]);
+        foreach (PermissionEnums::cases() as $permission) {
+            Permission::firstOrCreate(['name' => $permission->value]);
+        }
+
+        foreach (RoleEnums::cases() as $role) {
+            $createdRole = Role::firstOrCreate(['name' => $role->value]);
+
+            $permissions = match ($role) {
+                RoleEnums::Admin => PermissionEnums::all(),
+                RoleEnums::User => PermissionEnums::forUser()
+            };
+
+            $createdRole->syncPermissions($permissions);
         }
     }
 }

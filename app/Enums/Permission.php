@@ -22,6 +22,11 @@ enum Permission: string
     case WRITE_TASK = 'write task';
     case DELETE_TASK = 'delete task';
 
+    public static function all(): array
+    {
+        return array_column(Permission::cases(), 'value');
+    }
+
     public static function forManager(): array
     {
         return [
