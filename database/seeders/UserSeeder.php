@@ -12,18 +12,22 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = User::factory()->create([
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => 'admin@example.com',
-        ]);
+        $admin = User::factory()
+            ->admin()
+            ->create([
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'email' => 'admin@example.com',
+            ]);
 
-        $user = User::factory()->create([
-            'first_name' => 'Matt',
-            'last_name' => 'Brown',
-            'email' => 'user@example.com',
-        ]);
+        $user = User::factory()
+            ->user()
+            ->create([
+                'first_name' => 'Matt',
+                'last_name' => 'Brown',
+                'email' => 'user@example.com',
+            ]);
 
-        User::factory()->count(10)->create();
+        User::factory()->count(10)->user()->create();
     }
 }

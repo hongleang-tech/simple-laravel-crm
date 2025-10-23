@@ -67,8 +67,18 @@ class User extends Authenticatable
     // Attributes
     public function name(): Attribute
     {
-        return Attribute::get(function() {
+        return Attribute::get(function () {
             return "{$this->first_name} {$this->last_name}";
         });
     }
+
+    public function roleNames(): Attribute
+    {
+        return Attribute::get(function () {
+            $roleNames = $this->roles?->pluck('name')->map('ucfirst')->toArray();
+
+            return implode(',', $roleNames ?: []);
+        });
+    }
+    
 }

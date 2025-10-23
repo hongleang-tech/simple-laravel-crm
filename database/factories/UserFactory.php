@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Role as RoleEnum;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -50,6 +51,20 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             $user->address()->create(Address::factory()->make()->toArray());
+        });
+    }
+
+    public function admin(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole(RoleEnum::Admin);
+        });
+    }
+
+    public function user(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole(RoleEnum::User);
         });
     }
 }
