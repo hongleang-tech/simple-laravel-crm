@@ -21,20 +21,64 @@
         @include('layouts.sidebar')
 
         <!-- Page Content -->
-        <main class="relative left-64 xl:left-72 flex-1 p-6 overflow-y-auto w-[calc(100%-256px)] xl:w-[calc(100%-288px)]">
+        <main
+            class="relative left-64 xl:left-72 flex-1 p-6 overflow-y-auto w-[calc(100%-256px)] xl:w-[calc(100%-288px)]">
             @isset($header)
                 <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
-            <section class=" p-6 rounded-lg">
+            <section class="p-6 rounded-lg ">
                 {{ $slot }}
             </section>
         </main>
     </div>
+
+    <!-- Toast Container -->
+    <x-toast-container />
+
+    <!-- Flash Messages -->
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        type: 'success',
+                        message: {!! json_encode(session('success')) !!}
+                    }
+                }));
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        type: 'error',
+                        message: {!! json_encode(session('error')) !!}
+                    }
+                }));
+            });
+        </script>
+    @endif
+
+    @if (session('server-error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        type: 'error',
+                        message: {!! json_encode(session('server-error')) !!}
+                    }
+                }));
+            });
+        </script>
+    @endif
 </body>
 
 </html>

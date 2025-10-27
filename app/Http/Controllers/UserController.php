@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -42,17 +41,11 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $user): View
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
+        return view('users.show', [
+            'user' => $user
+        ]);
     }
 
     /**
@@ -66,8 +59,14 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
-        //
+        Gate::authorize('delete', $user);
+
+        abort_if($user->id === auth()->user()->id, 500, "Can't delete your own account from this screen.");
+
+        $user->delete();
+
+        return redirect(route('users.index'))->with('success', 'User has been deleted successfully.');
     }
 }

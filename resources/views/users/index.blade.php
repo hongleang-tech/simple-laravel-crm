@@ -1,5 +1,5 @@
 <x-app-layout>
-    <section class="container px-4 mx-auto">
+    <section x-data="{ selectedUserId: null }" class="container px-4 mx-auto">
         <h2 class="text-lg font-medium text-gray-800 dark:text-white">Users</h2>
 
         <div class="flex flex-col mt-6">
@@ -56,8 +56,19 @@
 
                                         <x-table.tcell>
                                             <div class="flex items-center gap-2">
-                                                <x-primary-button>Edit</x-primary-button>
-                                                <x-danger-button>Delete</x-danger-button>
+                                                @if (auth()->user()->hasRole('admin'))
+                                                    <x-primary-button
+                                                        @click="window.location.href = '{{ route('users.show', $user) }}'">
+                                                        Edit
+                                                    </x-primary-button>
+                                                    @if (auth()->user()->id !== $user->id)
+                                                        <x-danger-button
+                                                            x-on:click.prevent="selectedUserId = {{ $user->id }}; $dispatch('open-modal', 'confirm-user-deletion');">
+                                                            {{ __('Delete User') }}
+                                                        </x-danger-button>
+                                                    @endif
+                                                @endif
+
                                             </div>
                                         </x-table.tcell>
                                     </tr>
@@ -70,47 +81,31 @@
             </div>
         </div>
 
-        <div class="flex items-center justify-between mt-6">
-            <a href="#"
-                class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
-                </svg>
+        <x-modal name="confirm-user-deletion" focusable>
+            <form method="post" x-bind:action="`users/${selectedUserId}`" class="p-6">
+                @csrf
+                @method('delete')
 
-                <span>
-                    previous
-                </span>
-            </a>
+                <h2 class="text-lg font-medium text-gray-900">
+                    {{ __('Are you sure you want to delete this user?') }}
+                </h2>
 
-            <div class="items-center hidden md:flex gap-x-3">
-                <a href="#"
-                    class="px-2 py-1 text-sm text-blue-500 rounded-md dark:bg-gray-800 bg-blue-100/60">1</a>
-                <a href="#"
-                    class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">2</a>
-                <a href="#"
-                    class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">3</a>
-                <a href="#"
-                    class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">...</a>
-                <a href="#"
-                    class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">12</a>
-                <a href="#"
-                    class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">13</a>
-                <a href="#"
-                    class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">14</a>
-            </div>
+                <p class="mt-1 text-sm text-gray-600">
+                    {{ __('Once the user is deleted, all of its resources and data will be permanently deleted. Please click delete user button to confirm.') }}
+                </p>
 
-            <a href="#"
-                class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
-                <span>
-                    Next
-                </span>
+                <div class="mt-6 flex justify-end">
+                    <x-secondary-button x-on:click="$dispatch('close')">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
 
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                </svg>
-            </a>
-        </div>
+                    <x-danger-button type="submit" class="ms-3">
+                        {{ __('Delete User') }}
+                    </x-danger-button>
+                </div>
+            </form>
+        </x-modal>
+
+        <x-pagination :paginator="$users" />
     </section>
 </x-app-layout>
