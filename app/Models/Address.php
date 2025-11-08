@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Address extends Model
 {
@@ -18,12 +19,13 @@ class Address extends Model
         'postcode',
         'suburb',
         'state',
-        'country'
+        'country',
+        'user_id'
     ];
 
-    public function user(): BelongsTo
+    public function addressable(): MorphTo
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
 
     public function fullAddress(): Attribute

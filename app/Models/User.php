@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -59,9 +60,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Task::class);
     }
 
-    public function address(): HasOne
+    public function address(): MorphOne
     {
-        return $this->hasOne(Address::class);
+        return $this->morphOne(Address::class, 'addressable');
     }
 
     // Attributes

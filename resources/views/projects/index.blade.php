@@ -1,9 +1,10 @@
 <x-app-layout>
-    <section x-data="{ selectedUserId: null }" class="container px-4 mx-auto">
-        <div class="flex items-center flex-wrap gap-4 xs:flex-nowrap sm:justify-between">
-            <h2 class="text-lg font-medium text-gray-800 dark:text-white">Users</h2>
+    <section x-data="{ selectedId: null }" class="container px-4 mx-auto">
+        <div class="flex flex-wrap items-center gap-4 xs:flex-nowrap sm:justify-between">
+            <h2 class="text-lg font-medium text-gray-800 dark:text-white">Projects</h2>
             @can('write user')
-                <x-primary-button @click="window.location.href='{{ route('users.create') }}'">+ Add user</x-primary-button>
+                <x-primary-button @click="window.location.href='{{ route('projects.create') }}'">+ Add
+                    project</x-primary-button>
             @endcan
         </div>
 
@@ -19,16 +20,22 @@
                                         Name
                                     </x-table.thead>
                                     <x-table.thead>
-                                        Email
+                                        Status
                                     </x-table.thead>
                                     <x-table.thead>
-                                        Role
+                                        Start Date
                                     </x-table.thead>
                                     <x-table.thead>
-                                        Address
+                                        End Date
                                     </x-table.thead>
                                     <x-table.thead>
-                                        Phone
+                                        Budget
+                                    </x-table.thead>
+                                    <x-table.thead>
+                                        Updated At
+                                    </x-table.thead>
+                                    <x-table.thead>
+                                        Created By
                                     </x-table.thead>
                                     <x-table.thead>
                                         Actions
@@ -37,39 +44,48 @@
                             </x-slot>
 
                             <x-slot name="tableBody">
-                                @foreach ($users as $user)
+                                @foreach ($projects as $project)
                                     <tr>
                                         <x-table.tcell>
-                                            {{ $user->name }}
+                                            {{ $project->name }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->email }}
+                                            {{ $project->status->label() }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->roleNames }}
+                                            {{ $project->start_date->format('d/m/Y') }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->address?->fullAddress ?? '-' }}
+                                            {{ $project->end_date->format('d/m/Y') }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->phone_number }}
+                                            {{ number_format($project->budget, 2) }}
                                         </x-table.tcell>
+
+                                        <x-table.tcell>
+                                            {{ $project->updated_at->format('d/m/Y H:i a') }}
+                                        </x-table.tcell>
+
+                                        <x-table.tcell>
+                                            {{ $project->createdBy?->name ?: '-' }}
+                                        </x-table.tcell>
+
 
                                         <x-table.tcell>
                                             <div class="flex items-center gap-2">
                                                 @can('write user')
                                                     <x-primary-button
-                                                        @click="window.location.href = '{{ route('users.show', $user) }}'">
+                                                        @click="window.location.href = '{{ route('projects.show', $project) }}'">
                                                         Edit
                                                     </x-primary-button>
-                                                    @if (auth()->user()->id !== $user->id)
+                                                    @if (auth()->user()->id !== $project->id)
                                                         <x-danger-button
-                                                            x-on:click.prevent="selectedUserId = {{ $user->id }}; $dispatch('open-modal', 'confirm-user-deletion');">
-                                                            {{ __('Delete User') }}
+                                                            x-on:click.prevent="selectedId = {{ $project->id }}; $dispatch('open-modal', 'confirm-user-deletion');">
+                                                            {{ __('Delete Project') }}
                                                         </x-danger-button>
                                                     @endif
                                                 @endcan
@@ -87,30 +103,30 @@
         </div>
 
         <x-modal name="confirm-user-deletion" focusable>
-            <form method="post" x-bind:action="`users/${selectedUserId}`" class="p-6">
+            <form method="post" x-bind:action="`projects/${selectedId}`" class="p-6">
                 @csrf
                 @method('delete')
 
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ __('Are you sure you want to delete this user?') }}
+                    {{ __('Are you sure you want to delete this project?') }}
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    {{ __('Once the user is deleted, all of its resources and data will be permanently deleted. Please click delete user button to confirm.') }}
+                    {{ __('Once the project is deleted, all of its resources and data will be permanently deleted. Please click delete project button to confirm.') }}
                 </p>
 
-                <div class="mt-6 flex justify-end">
+                <div class="flex justify-end mt-6">
                     <x-secondary-button x-on:click="$dispatch('close')">
                         {{ __('Cancel') }}
                     </x-secondary-button>
 
                     <x-danger-button type="submit" class="ms-3">
-                        {{ __('Delete User') }}
+                        {{ __('Delete Project') }}
                     </x-danger-button>
                 </div>
             </form>
         </x-modal>
 
-        <x-pagination :paginator="$users" />
+        <x-pagination :paginator="$projects" />
     </section>
 </x-app-layout>

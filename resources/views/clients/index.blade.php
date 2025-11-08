@@ -1,9 +1,9 @@
 <x-app-layout>
-    <section x-data="{ selectedUserId: null }" class="container px-4 mx-auto">
+    <section x-data="{ selectedId: null }" class="container px-4 mx-auto">
         <div class="flex items-center flex-wrap gap-4 xs:flex-nowrap sm:justify-between">
-            <h2 class="text-lg font-medium text-gray-800 dark:text-white">Users</h2>
+            <h2 class="text-lg font-medium text-gray-800 dark:text-white">Clients</h2>
             @can('write user')
-                <x-primary-button @click="window.location.href='{{ route('users.create') }}'">+ Add user</x-primary-button>
+                <x-primary-button @click="window.location.href='{{ route('clients.create') }}'">+ Add client</x-primary-button>
             @endcan
         </div>
 
@@ -22,13 +22,16 @@
                                         Email
                                     </x-table.thead>
                                     <x-table.thead>
-                                        Role
+                                        Phone
+                                    </x-table.thead>
+                                    <x-table.thead>
+                                        Company
                                     </x-table.thead>
                                     <x-table.thead>
                                         Address
                                     </x-table.thead>
                                     <x-table.thead>
-                                        Phone
+                                        Status
                                     </x-table.thead>
                                     <x-table.thead>
                                         Actions
@@ -37,38 +40,42 @@
                             </x-slot>
 
                             <x-slot name="tableBody">
-                                @foreach ($users as $user)
+                                @foreach ($clients as $client)
                                     <tr>
                                         <x-table.tcell>
-                                            {{ $user->name }}
+                                            {{ $client->name }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->email }}
+                                            {{ $client->email }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->roleNames }}
+                                            {{ $client->phone }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->address?->fullAddress ?? '-' }}
+                                            {{ $client->company }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
-                                            {{ $user->phone_number }}
+                                            {{ $client->address?->fullAddress ?? '-' }}
+                                        </x-table.tcell>
+
+                                        <x-table.tcell>
+                                            {{ $client->status->label() }}
                                         </x-table.tcell>
 
                                         <x-table.tcell>
                                             <div class="flex items-center gap-2">
                                                 @can('write user')
                                                     <x-primary-button
-                                                        @click="window.location.href = '{{ route('users.show', $user) }}'">
+                                                        @click="window.location.href = '{{ route('clients.show', $client) }}'">
                                                         Edit
                                                     </x-primary-button>
-                                                    @if (auth()->user()->id !== $user->id)
+                                                    @if (auth()->user()->id !== $client->id)
                                                         <x-danger-button
-                                                            x-on:click.prevent="selectedUserId = {{ $user->id }}; $dispatch('open-modal', 'confirm-user-deletion');">
+                                                            x-on:click.prevent="selectedId = {{ $client->id }}; $dispatch('open-modal', 'confirm-user-deletion');">
                                                             {{ __('Delete User') }}
                                                         </x-danger-button>
                                                     @endif
@@ -87,7 +94,7 @@
         </div>
 
         <x-modal name="confirm-user-deletion" focusable>
-            <form method="post" x-bind:action="`users/${selectedUserId}`" class="p-6">
+            <form method="post" x-bind:action="`clients/${selectedId}`" class="p-6">
                 @csrf
                 @method('delete')
 
@@ -96,7 +103,7 @@
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    {{ __('Once the user is deleted, all of its resources and data will be permanently deleted. Please click delete user button to confirm.') }}
+                    {{ __('Once the client is deleted, all of its resources and data will be permanently deleted. Please click delete client button to confirm.') }}
                 </p>
 
                 <div class="mt-6 flex justify-end">
@@ -105,12 +112,12 @@
                     </x-secondary-button>
 
                     <x-danger-button type="submit" class="ms-3">
-                        {{ __('Delete User') }}
+                        {{ __('Delete Client') }}
                     </x-danger-button>
                 </div>
             </form>
         </x-modal>
 
-        <x-pagination :paginator="$users" />
+        <x-pagination :paginator="$clients" />
     </section>
 </x-app-layout>

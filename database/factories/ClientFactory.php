@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\ClientStatus;
+use App\Models\Address;
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,11 +23,17 @@ class ClientFactory extends Factory
         return [
             'name' => $this->faker->company(),
             'email' => $this->faker->unique()->companyEmail(),
-            'phone' => $this->faker->phoneNumber(),
+            'phone_number' => fake()->numerify("04########"),
             'company' => $this->faker->company(),
-            'address' => $this->faker->address(),
-            'status' => $this->faker->randomElement(['active', 'inactive', 'prospect']),
+            'status' => $this->faker->randomElement(ClientStatus::getAllByKey('value')),
             'user_id' => User::factory(),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Client $client) {
+            $client->address()->create(Address::factory()->make()->toArray());
+        });
     }
 }

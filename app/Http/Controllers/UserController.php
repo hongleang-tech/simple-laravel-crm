@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\Address;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -25,17 +29,37 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('users.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        //
+        $user = new User($request->safe()->only([
+            'first_name',
+            'last_name',
+            'email',
+            'phone_number'
+        ]));
+
+        $user->password = Hash::make(Str::random(10));
+
+        $user->save();
+
+        $user->address()->create($request->safe()->only([
+            'address_1',
+            'address_2',
+            'suburb',
+            'postcode',
+            'state',
+            'country'
+        ]));
+
+        return redirect()->route('users.show', ['user' => $user])->with('success', 'User has been created successfully updated.');
     }
 
     /**
@@ -43,6 +67,8 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
+        Gate::authorize('view', $user);
+
         return view('users.show', [
             'user' => $user
         ]);
@@ -51,9 +77,35 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        //
+        $user->fill($request->safe()->only([
+            'first_name',
+            'last_name',
+            'email',
+            'phone_number'
+        ]));
+
+        $address = $user->address ?: new Address();
+
+        $address->fill($request->safe()->only([
+            'address_1',
+            'address_2',
+            'suburb',
+            'postcode',
+            'state',
+            'country'
+        ]));
+
+        $address->save();
+
+        if ($address->wasRecentlyCreated) {
+            $user->associate($address);
+        }
+
+        $user->save();
+
+        return back()->with('success', 'User has been successfully updated.');
     }
 
     /**

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\ProjectStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Project extends Model
 {
@@ -29,6 +31,13 @@ class Project extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'status' => ProjectStatus::class,
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'budget' => 'float'
+    ];
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
@@ -47,5 +56,10 @@ class Project extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function address(): MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
     }
 }

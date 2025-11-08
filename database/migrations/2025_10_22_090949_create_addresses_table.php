@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('postcode');
             $table->string('country')->default('Australia');
 
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->morphs('addressable');
             $table->timestamps();
         });
     }

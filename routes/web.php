@@ -25,15 +25,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::resource('users', UserController::class)
-        ->only(['index', 'show', 'edit', 'update', 'destroy'])
+        ->only(['index', 'show', 'create', 'update', 'store', 'destroy'])
         ->names('users');
 
     Route::resource('clients', ClientController::class)
-        ->only(['index', 'show', 'edit', 'update', 'destroy'])
+        ->only(['index', 'show', 'create', 'update', 'store', 'destroy'])
         ->names('clients');
 
     Route::resource('projects', ProjectController::class)
-        ->only(['index', 'show', 'edit', 'update', 'destroy'])
+        ->only(['index', 'show', 'create', 'update', 'store', 'destroy'])
         ->names('projects');
 });
 

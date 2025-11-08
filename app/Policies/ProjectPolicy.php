@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission as PermissionEnum;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -29,7 +30,7 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermissionTo(PermissionEnum::WRITE_PROJECT);
     }
 
     /**
@@ -37,7 +38,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return false;
+        return $user->hasPermissionTo(PermissionEnum::WRITE_PROJECT);
     }
 
     /**
@@ -45,7 +46,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return false;
+        return $user->hasPermissionTo(PermissionEnum::WRITE_PROJECT);
     }
 
     /**

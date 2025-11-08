@@ -28,7 +28,7 @@
             </x-nav-link>
 
 
-            <x-nav-link class="mt-5" :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-nav-link class="mt-5" :href="route('clients.index')" :active="request()->routeIs('clients.*')">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
@@ -52,7 +52,7 @@
                 <span class="mx-4 font-medium">{{ __('Tasks') }}</span>
             </x-nav-link>
 
-            <x-nav-link class="mt-5" :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-nav-link class="mt-5" :href="route('projects.index')" :active="request()->routeIs('projects.*')">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M15 5V7M15 11V13M15 17V19M5 5C3.89543 5 3 5.89543 3 7V10C4.10457 10 5 10.8954 5 12C5 13.1046 4.10457 14 3 14V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V14C19.8954 14 19 13.1046 19 12C19 10.8954 19.8954 10 21 10V7C21 5.89543 20.1046 5 19 5H5Z"

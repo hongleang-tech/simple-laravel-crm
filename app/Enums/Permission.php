@@ -4,6 +4,12 @@ namespace App\Enums;
 
 enum Permission: string
 {
+    // Users
+    case LIST_USERS = 'list users';
+    case READ_USER = 'read user';
+    case WRITE_USER = 'write user';
+    case DELETE_USER = 'delete user';
+
     // Clients
     case LIST_CLIENTS = 'list clients';
     case READ_CLIENT = 'read client';

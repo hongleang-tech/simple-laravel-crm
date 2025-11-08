@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Enums\Permission as PermissionEnum;
 use App\Enums\Role as RoleEnum;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
@@ -22,7 +21,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return false;
+        return $user->hasPermissionTo(PermissionEnum::WRITE_USER);
     }
 
     /**
@@ -30,7 +29,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo(RoleEnum::Admin);
+        return $user->hasRole(RoleEnum::Admin);
     }
 
     /**
@@ -38,7 +37,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->hasPermissionTo(RoleEnum::Admin) || ($model->id === auth()->user()->id);
+        return $user->hasPermissionTo(PermissionEnum::WRITE_USER) || ($model->id === auth()->user()->id);
     }
 
     /**

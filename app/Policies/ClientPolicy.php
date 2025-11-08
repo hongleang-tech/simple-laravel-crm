@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission as PermissionEnum;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -29,7 +30,7 @@ class ClientPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermissionTo(PermissionEnum::WRITE_CLIENT);
     }
 
     /**
@@ -37,7 +38,7 @@ class ClientPolicy
      */
     public function update(User $user, Client $client): bool
     {
-        return false;
+        return $user->hasPermissionTo(PermissionEnum::WRITE_CLIENT);
     }
 
     /**

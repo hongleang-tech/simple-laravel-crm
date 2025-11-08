@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
+use App\Rules\PhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -24,11 +26,16 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name',
-            'last_name',
-            'phone_number',
-            'email',
-            'password'
+            'first_name' => ['required', 'alpha', 'string', 'max:100'],
+            'last_name' => ['required', 'alpha', 'string', 'max:100'],
+            'phone_number' => ['required', 'string', new PhoneNumber()],
+            'email' => ['required', 'string', 'email', 'unique:users,email'],
+            'address_1' => ['required', 'string', 'max:100'],
+            'address_2' => ['nullable', 'string', 'max:100'],
+            'suburb' => ['required', 'string', 'max:100'],
+            'state' => ['required', 'string', 'max:100'],
+            'postcode' => ['required', 'string', 'max:4'],
+            'country' => ['required', 'string', Rule::in(['Australia', 'New Zealand'])],
         ];
     }
 }

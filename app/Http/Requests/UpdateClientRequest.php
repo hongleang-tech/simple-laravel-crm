@@ -2,16 +2,17 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
-class UpdateClientRequest extends FormRequest
+class UpdateClientRequest extends StoreClientRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return Gate::allows('update', $this->route('client'));
     }
 
     /**
@@ -22,7 +23,19 @@ class UpdateClientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            ...parent::rules(),
+            'email' => [
+                'required',
+                'string',
+                'email',
+                Rule::unique('clients', 'email')->ignore($this->route('client'))
+            ],
+            'company' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('clients', 'company')->ignore($this->route('client'))
+            ]
         ];
     }
 }

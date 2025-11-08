@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone');
             $table->string('company')->nullable();
-            $table->text('address');
             $table->string('status')->default('active');
 
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
