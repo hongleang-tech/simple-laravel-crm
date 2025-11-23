@@ -19,9 +19,9 @@ enum ClientStatus: string
 
     public static function options(): array
     {
-        return collect(self::cases())->map(fn(ClientStatus $status) => [
+        return collect(self::cases())->map(fn (ClientStatus $status) => [
             'value' => $status->value,
-            'label' => $status->label()
+            'label' => $status->label(),
         ])->toArray();
     }
 

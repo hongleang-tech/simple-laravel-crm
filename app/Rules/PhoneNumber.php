@@ -17,10 +17,10 @@ class PhoneNumber implements ValidationRule
         $input = (string) $value;
 
         $normalize = preg_replace('/[\s\-\(\)]/', '', $input);
-        
+
         $isValid = preg_match('/^(\+61|0)4\d{8}$/', $normalize);
 
-        if (!$isValid) {
+        if (! $isValid) {
             $fail('The :attribute must be a valid Australia mobile number.');
         }
     }

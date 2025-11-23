@@ -20,7 +20,7 @@ class ClientController extends Controller
         $clients = Client::with(['address'])->paginate();
 
         return view('clients.index', [
-            'clients' => $clients
+            'clients' => $clients,
         ]);
     }
 
@@ -30,7 +30,7 @@ class ClientController extends Controller
     public function create(): View
     {
         return view('clients.create', [
-            'statusOptions' => ClientStatus::options()
+            'statusOptions' => ClientStatus::options(),
         ]);
     }
 
@@ -53,7 +53,7 @@ class ClientController extends Controller
             'suburb',
             'postcode',
             'state',
-            'country'
+            'country',
         ]));
 
         $client->save();
@@ -68,7 +68,7 @@ class ClientController extends Controller
     {
         return view('clients.show', [
             'client' => $client,
-            'statusOptions' => ClientStatus::options()
+            'statusOptions' => ClientStatus::options(),
         ]);
     }
 
@@ -91,7 +91,7 @@ class ClientController extends Controller
             'suburb',
             'postcode',
             'state',
-            'country'
+            'country',
         ]));
 
         return back()->with('success', 'Client has been successfully updated.');

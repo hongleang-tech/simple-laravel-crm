@@ -30,7 +30,7 @@ class Client extends Model
     ];
 
     protected $casts = [
-        'status' => ClientStatus::class
+        'status' => ClientStatus::class,
     ];
 
     public function createdBy(): BelongsTo

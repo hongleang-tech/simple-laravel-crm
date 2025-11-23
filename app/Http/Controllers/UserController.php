@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserListResource;
+use App\Http\Resources\UserResource;
 use App\Models\Address;
 use App\Models\User;
-use Illuminate\Contracts\View\View;
+use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -17,61 +21,61 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(): ResourceCollection
     {
         $users = User::with(['address', 'roles'])->paginate();
 
-        return view('users.index', [
-            'users' => $users
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): View
-    {
-        return view('users.create');
+        return UserListResource::collection($users);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): UserResource
     {
-        $user = new User($request->safe()->only([
-            'first_name',
-            'last_name',
-            'email',
-            'phone_number'
-        ]));
+        DB::beginTransaction();
 
-        $user->password = Hash::make(Str::random(10));
+        try {
+            $user = User::create([
+                ...$request->safe([
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'phone_number',
+                ]),
+                'password' => Hash::make(Str::random(10)),
+            ]);
 
-        $user->save();
+            $user->address()->create($request->safe([
+                'address_1',
+                'address_2',
+                'suburb',
+                'postcode',
+                'state',
+                'country',
+            ]));
 
-        $user->address()->create($request->safe()->only([
-            'address_1',
-            'address_2',
-            'suburb',
-            'postcode',
-            'state',
-            'country'
-        ]));
+            DB::commit();
 
-        return redirect()->route('users.show', ['user' => $user])->with('success', 'User has been created successfully updated.');
+            $user->load(['address']);
+
+            return new UserResource($user);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user): View
+    public function show(User $user): UserResource
     {
         Gate::authorize('view', $user);
 
-        return view('users.show', [
-            'user' => $user
-        ]);
+        $user->load(['address']);
+
+        return new UserResource($user);
     }
 
     /**
@@ -83,10 +87,10 @@ class UserController extends Controller
             'first_name',
             'last_name',
             'email',
-            'phone_number'
+            'phone_number',
         ]));
 
-        $address = $user->address ?: new Address();
+        $address = $user->address ?: new Address;
 
         $address->fill($request->safe()->only([
             'address_1',
@@ -94,7 +98,7 @@ class UserController extends Controller
             'suburb',
             'postcode',
             'state',
-            'country'
+            'country',
         ]));
 
         $address->save();

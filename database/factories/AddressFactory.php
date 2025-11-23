@@ -22,7 +22,7 @@ class AddressFactory extends Factory
             'suburb' => $this->faker->city(),
             'postcode' => $this->faker->numerify('####'),
             'state' => $this->faker->state(),
-            'country' => 'Australia'
+            'country' => 'Australia',
         ];
     }
 }

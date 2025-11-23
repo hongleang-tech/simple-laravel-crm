@@ -20,7 +20,7 @@ class ProjectController extends Controller
         $projects = Project::with(['address'])->paginate();
 
         return view('projects.index', [
-            'projects' => $projects
+            'projects' => $projects,
         ]);
     }
 
@@ -30,7 +30,7 @@ class ProjectController extends Controller
     public function create(): View
     {
         return view('projects.create', [
-            'statusOptions' => ProjectStatus::options()
+            'statusOptions' => ProjectStatus::options(),
         ]);
     }
 
@@ -44,13 +44,13 @@ class ProjectController extends Controller
             'description',
             'status',
             'budget',
-            'client_id'
+            'client_id',
         ]));
 
         $project->fill([
             'start_date' => Carbon::createFromFormat('d/m/Y', $request->safe(['start_date'])),
             'end_date' => Carbon::createFromFormat('d/m/Y', $request->safe(['end_date'])),
-            'user_id' => $request->user()->id
+            'user_id' => $request->user()->id,
         ]);
 
         $project->address()->create($request->safe()->only([
@@ -59,7 +59,7 @@ class ProjectController extends Controller
             'suburb',
             'postcode',
             'state',
-            'country'
+            'country',
         ]));
 
         $project->save();
@@ -74,7 +74,7 @@ class ProjectController extends Controller
     {
         return view('projects.show', [
             'project' => $project,
-            'statusOptions' => ProjectStatus::options()
+            'statusOptions' => ProjectStatus::options(),
         ]);
     }
 

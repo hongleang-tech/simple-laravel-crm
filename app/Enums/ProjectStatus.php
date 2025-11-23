@@ -23,9 +23,9 @@ enum ProjectStatus: string
 
     public static function options(): array
     {
-        return collect(self::cases())->map(fn(ProjectStatus $status) => [
+        return collect(self::cases())->map(fn (ProjectStatus $status) => [
             'value' => $status->value,
-            'label' => $status->label()
+            'label' => $status->label(),
         ])->toArray();
     }
 

@@ -23,7 +23,7 @@ class ClientFactory extends Factory
         return [
             'name' => $this->faker->company(),
             'email' => $this->faker->unique()->companyEmail(),
-            'phone_number' => fake()->numerify("04########"),
+            'phone_number' => fake()->numerify('04########'),
             'company' => $this->faker->company(),
             'status' => $this->faker->randomElement(ClientStatus::getAllByKey('value')),
             'user_id' => User::factory(),

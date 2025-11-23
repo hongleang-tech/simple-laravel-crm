@@ -2,53 +2,65 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Enums\Permission;
+use App\Enums\Role as RoleEnum;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_login_screen_can_be_rendered(): void
+    public function testCanAuthenticateUsingLoginRoute(): void
     {
-        $response = $this->get('/login');
+        $user = User::factory()->user()->create([
+            'password' => 'password',
+        ]);
 
-        $response->assertStatus(200);
-    }
-
-    public function test_users_can_authenticate_using_the_login_screen(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->post('/login', [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response
+            ->assertSuccessful()
+            ->assertJson(
+                fn(AssertableJson $json) => $json
+                    ->has('data')
+                    ->first(
+                        fn(AssertableJson $json) => $json
+                            ->where('name', $user->name)
+                            ->where('email', $user->email)
+                            ->where('roles', [RoleEnum::User->value])
+                            ->where('permissions.0.name', Permission::LIST_CLIENTS->value)
+                            ->etc()
+                    )
+            )
+        ;
     }
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    public function testUsersCannotAuthenticateWithInvalidPassword(): void
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $response = $this->postJson('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
 
-        $this->assertGuest();
+        $response->assertJsonValidationErrorFor('email');
     }
 
-    public function test_users_can_logout(): void
+    public function testUsersCanLogout(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/logout');
+        $response = $this->actingAs($user)->postJson('/logout');
 
-        $this->assertGuest();
-        $response->assertRedirect('/');
+        $response->assertNoContent();
+
+        $response->assertSessionMissing('token');
     }
 }

@@ -28,7 +28,7 @@ class StoreUserRequest extends FormRequest
         return [
             'first_name' => ['required', 'alpha', 'string', 'max:100'],
             'last_name' => ['required', 'alpha', 'string', 'max:100'],
-            'phone_number' => ['required', 'string', new PhoneNumber()],
+            'phone_number' => ['required', 'string', new PhoneNumber],
             'email' => ['required', 'string', 'email', 'unique:users,email'],
             'address_1' => ['required', 'string', 'max:100'],
             'address_2' => ['nullable', 'string', 'max:100'],

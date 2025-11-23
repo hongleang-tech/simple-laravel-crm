@@ -29,7 +29,7 @@ class StoreClientRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'unique:clients,email'],
-            'phone' => ['required', 'string', new PhoneNumber()],
+            'phone' => ['required', 'string', new PhoneNumber],
             'company' => ['required', 'string', 'max:100', 'unique:clients,company'],
             'status' => ['required', 'string', Rule::in(ClientStatus::cases())],
             'address_1' => ['required', 'string', 'max:100'],

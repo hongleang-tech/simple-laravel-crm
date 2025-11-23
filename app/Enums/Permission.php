@@ -60,7 +60,7 @@ enum Permission: string
             self::LIST_TASKS->value,
             self::READ_TASK->value,
             self::LIST_TASKS->value,
-            self::READ_TASK->value
+            self::READ_TASK->value,
         ];
     }
 }

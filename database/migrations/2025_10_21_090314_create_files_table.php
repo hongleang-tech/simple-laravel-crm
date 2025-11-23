@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('disk')->default('public');
             $table->string('mime_type')->nullable();
             $table->unsignedBigInteger('size')->nullable();
-            
+
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });

@@ -28,14 +28,14 @@ class UpdateClientRequest extends StoreClientRequest
                 'required',
                 'string',
                 'email',
-                Rule::unique('clients', 'email')->ignore($this->route('client'))
+                Rule::unique('clients', 'email')->ignore($this->route('client')),
             ],
             'company' => [
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('clients', 'company')->ignore($this->route('client'))
-            ]
+                Rule::unique('clients', 'company')->ignore($this->route('client')),
+            ],
         ];
     }
 }

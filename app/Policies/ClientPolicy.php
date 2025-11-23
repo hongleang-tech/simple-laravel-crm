@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Enums\Permission as PermissionEnum;
 use App\Models\Client;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ClientPolicy
 {

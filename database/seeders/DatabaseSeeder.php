@@ -31,8 +31,10 @@ class DatabaseSeeder extends Seeder
                     ->recycle($client)
                     ->recycle($this->adminUser())
                     ->has(Task::factory(rand(2, 3)), 'tasks')
-                    ->create();
-            });
+                    ->create()
+                ;
+            })
+        ;
     }
 
     protected function adminUser(): ?User

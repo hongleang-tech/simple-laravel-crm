@@ -19,7 +19,7 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         $start = $this->faker->dateTimeBetween('-1 month', '+1 month');
-        $end = (clone $start)->modify('+' . $this->faker->numberBetween(7, 120) . ' days');
+        $end = (clone $start)->modify('+'.$this->faker->numberBetween(7, 120).' days');
 
         return [
             'client_id' => Client::factory(),
