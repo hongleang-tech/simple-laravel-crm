@@ -8,25 +8,33 @@ use App\Http\Resources\LoggedInUserResource;
 use App\Models\User;
 use App\Rules\PhoneNumber;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Inertia\Response as InertiaResponse;
+use Inertia\Inertia;
 
 class RegisteredUserController extends Controller
 {
+    public function create(): InertiaResponse
+    {
+        return Inertia::render('Register');
+    }
+
     /**
      * Handle an incoming registration request.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): LoggedInUserResource
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'phone_number' => ['required', 'string', new PhoneNumber],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -44,6 +52,6 @@ class RegisteredUserController extends Controller
 
         $user->assignRole(RoleEnum::User);
 
-        return new LoggedInUserResource($user);
+        return to_route('dashboard');
     }
 }

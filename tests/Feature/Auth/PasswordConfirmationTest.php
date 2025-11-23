@@ -10,29 +10,35 @@ class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testPasswordCanBeConfirmed(): void
-    {
-        $user = User::factory()->create([
-            'password' => 'password',
-        ]);
-
-        $response = $this->actingAs($user)->postJson('/confirm-password', [
-            'password' => 'password',
-        ]);
-
-        $response->assertJsonMissingValidationErrors();
-
-        $response->assertNoContent();
-    }
-
-    public function testPasswordIsNotConfirmedWithInvalidPassword(): void
+    public function test_confirm_password_screen_can_be_rendered(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('/confirm-password', [
+        $response = $this->actingAs($user)->get('/confirm-password');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_password_can_be_confirmed(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/confirm-password', [
+            'password' => 'Secret*123',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHasNoErrors();
+    }
+
+    public function test_password_is_not_confirmed_with_invalid_password(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/confirm-password', [
             'password' => 'wrong-password',
         ]);
 
-        $response->assertJsonValidationErrorFor('password');
+        $response->assertSessionHasErrors();
     }
 }

@@ -13,51 +13,49 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
-Route::post('register', [RegisteredUserController::class, 'store']);
+// Route::post('register', [RegisteredUserController::class, 'store']);
 
-Route::post('login', [AuthenticatedSessionController::class, 'store']);
+// Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-    ->name('password.email')
-;
+// Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+//     ->name('password.email');
 
-Route::post('reset-password', [NewPasswordController::class, 'store'])
-    ->name('password.store')
-;
+// Route::post('reset-password', [NewPasswordController::class, 'store'])
+//     ->name('password.store');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('verify-email', EmailVerificationPromptController::class)
-        ->name('verification.notice')
-    ;
+    // Route::get('verify-email', EmailVerificationPromptController::class)
+    //     ->name('verification.notice')
+    // ;
 
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify')
-    ;
+    // Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    //     ->middleware(['signed', 'throttle:6,1'])
+    //     ->name('verification.verify')
+    // ;
 
-    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('verification.send')
-    ;
+    // Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+    //     ->middleware('throttle:6,1')
+    //     ->name('verification.send')
+    // ;
 
-    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
+    // Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+    // Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout')
-    ;
+    // Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    //     ->name('logout')
+    // ;
 
-    // Users
-    Route::get('/users', [UserController::class, 'index']);
+    // // Users
+    // Route::get('/users', [UserController::class, 'index']);
 
-    Route::prefix('users/{user}')->group(function () {
-        Route::get('/', [UserController::class, 'show']);
-    });
+    // Route::prefix('users/{user}')->group(function () {
+    //     Route::get('/', [UserController::class, 'show']);
+    // });
     //     Route::resource('users', UserController::class)
     //         ->only(['index', 'show', 'create', 'update', 'store', 'destroy'])
     //         ->names('users')
